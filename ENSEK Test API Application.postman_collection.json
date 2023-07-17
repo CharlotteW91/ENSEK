@@ -1,0 +1,2170 @@
+{
+	"info": {
+		"_postman_id": "90762bf0-8c0d-4dce-8098-59320572b62b",
+		"name": "ENSEK Test API Application",
+		"description": "Purchase Application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28536990"
+	},
+	"item": [
+		{
+			"name": "ENSEK",
+			"item": [
+				{
+					"name": "Buy Fuel and reset test data",
+					"item": [
+						{
+							"name": "post login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"//Test to confirm expected status code is returned\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"//Test to confirm expected properties are returned\r",
+											"pm.test(\"properties are correct\", function () {\r",
+											"pm.expect(jsonData).to.have.property(\"access_token\")\r",
+											"pm.expect(jsonData).to.have.property(\"message\")\r",
+											"});\r",
+											"\r",
+											"//Set access token variable\r",
+											"pm.environment.set(\"access_token\", jsonData.access_token)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"test\",\n  \"password\": \"testing\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"login"
+									]
+								},
+								"description": "Use to obtain an Bearer access token."
+							},
+							"response": []
+						},
+						{
+							"name": "post reset test data",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"//Test to confirm expected status code is returned\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"//Test to confirm expected properties are returned\r",
+											"pm.test(\"properties are correct\", function () {\r",
+											"pm.expect(jsonData).to.have.property(\"message\")\r",
+											"pm.expect(jsonData.message).to.have.eql(\"Success\")\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/reset",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"reset"
+									]
+								},
+								"description": "Use to reset the test data back to its initial state"
+							},
+							"response": []
+						},
+						{
+							"name": "get energy - Return current energy values",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"//Set value variables for each energy type\r",
+											"//Elec\r",
+											"pm.environment.set(\"elec_id\", jsonData.electric.energy_id);\r",
+											"pm.environment.set(\"elec_price_per_unit\", jsonData.electric.price_per_unit);\r",
+											"pm.environment.set(\"elec_quantity_of_units\", jsonData.electric.quantity_of_units);\r",
+											"pm.environment.set(\"elec_unit_type\", jsonData.electric.unit_type);\r",
+											"\r",
+											"//Gas\r",
+											"pm.environment.set(\"gas_id\", jsonData.gas.energy_id);\r",
+											"pm.environment.set(\"gas_price_per_unit\", jsonData.gas.price_per_unit);\r",
+											"pm.environment.set(\"gas_quantity_of_units\", jsonData.gas.quantity_of_units);\r",
+											"pm.environment.set(\"gas_unit_type\", jsonData.gas.unit_type);\r",
+											"\r",
+											"//nuclear\r",
+											"pm.environment.set(\"nuclear_id\", jsonData.nuclear.energy_id);\r",
+											"pm.environment.set(\"nuclear_price_per_unit\", jsonData.nuclear.price_per_unit);\r",
+											"pm.environment.set(\"nuclear_quantity_of_units\", jsonData.nuclear.quantity_of_units);\r",
+											"pm.environment.set(\"nuclear_unit_type\", jsonData.nuclear.unit_type);\r",
+											"\r",
+											"//oil\r",
+											"pm.environment.set(\"oil_id\", jsonData.oil.energy_id);\r",
+											"pm.environment.set(\"oil_price_per_unit\", jsonData.oil.price_per_unit);\r",
+											"pm.environment.set(\"oil_quantity_of_units\", jsonData.oil.quantity_of_units);\r",
+											"pm.environment.set(\"oil_unit_type\", jsonData.oil.unit_type);\r",
+											"\r",
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200, OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"// Confirm correct properties are returned for each energy type\r",
+											"pm.test(\"Expected electricty properties are returned\", function () {\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected gas properties are returned\", function () {\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected nuclear properties are returned\", function () {\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected oil properties are returned\", function () {\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/energy",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"energy"
+									]
+								},
+								"description": "Use to obtain details on energy types."
+							},
+							"response": []
+						},
+						{
+							"name": "put buy 1 unit of elec fuel",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\")\r",
+											"});\r",
+											"\r",
+											"var jsonData = pm.response.json();\r",
+											"\r",
+											"//Test response contains a message and that it is a string\r",
+											"pm.test('Validate response contains message', function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"message\")\r",
+											"});\r",
+											"\r",
+											"pm.test('Validate message property contains a string', function () {\r",
+											"   pm.expect(jsonData.message).to.be.a('string')\r",
+											"});\r",
+											"\r",
+											"// Get order id from message by use of split function\r",
+											"pm.environment.set(\"message\", jsonData.message)\r",
+											"const message = pm.environment.get(\"message\");\r",
+											"const split = message.split(' ')\r",
+											"console.log(split)\r",
+											"\r",
+											"pm.environment.set(\"Order_id\", split[18].slice(0,-1))\r",
+											"\r",
+											"//Test to ensure values returned in the messages are correct (Given I had more time this is what I would do)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/buy/:id/:quantity",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"buy",
+										":id",
+										":quantity"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{elec_id}}"
+										},
+										{
+											"key": "quantity",
+											"value": "1"
+										}
+									]
+								},
+								"description": "Use to purchase energy units."
+							},
+							"response": []
+						},
+						{
+							"name": "get energy - Check elec reduced by 1 unit",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200, OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"// Confirm correct properties are returned for all energy types\r",
+											"pm.test(\"Expected electricty properties are returned\", function () {\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected gas properties are returned\", function () {\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected nuclear properties are returned\", function () {\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected oil properties are returned\", function () {\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"// Test quantity_of_units returned are correct\r",
+											"pm.test(\"Electricty quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.electric.quantity_of_units).to.have.eql(pm.environment.get('elec_quantity_of_units')-1)\r",
+											"})\r",
+											"pm.test(\"Gas quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.gas.quantity_of_units).to.have.eql(pm.environment.get('gas_quantity_of_units'))\r",
+											"})\r",
+											"pm.test(\"nuclear quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.nuclear.quantity_of_units).to.have.eql(pm.environment.get('nuclear_quantity_of_units'))\r",
+											"})\r",
+											"pm.test(\"oil quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.oil.quantity_of_units).to.have.eql(pm.environment.get('oil_quantity_of_units'))\r",
+											"})\r",
+											"\r",
+											"// Test unit_types returned are correct\r",
+											"pm.test(\"Electricty unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.unit_type).to.have.eql(pm.environment.get('elec_unit_type'))\r",
+											"})\r",
+											"pm.test(\"Gas unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.unit_type).to.have.eql(pm.environment.get('gas_unit_type'))\r",
+											"})\r",
+											"pm.test(\"nuclear unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.unit_type).to.have.eql(pm.environment.get('nuclear_unit_type'))\r",
+											"})\r",
+											"pm.test(\"oil unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.unit_type).to.have.eql(pm.environment.get('oil_unit_type'))\r",
+											"})\r",
+											"\r",
+											"// Test energy_id returned are correct\r",
+											"pm.test(\"Electricty energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.energy_id).to.have.eql(pm.variables.get('elec_id'))\r",
+											"})\r",
+											"pm.test(\"Gas energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.energy_id).to.have.eql(pm.variables.get('gas_id'))\r",
+											"})\r",
+											"pm.test(\"nuclear energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.energy_id).to.have.eql(pm.variables.get('nuclear_id'))\r",
+											"})\r",
+											"pm.test(\"oil energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.energy_id).to.have.eql(pm.variables.get('oil_id'))\r",
+											"})\r",
+											"\r",
+											"// Test price_per_unit returned are correct\r",
+											"pm.test(\"Electricty price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.price_per_unit).to.have.eql(pm.variables.get('elec_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"Gas price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.price_per_unit).to.have.eql(pm.variables.get('gas_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"nuclear price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.price_per_unit).to.have.eql(pm.variables.get('nuclear_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"oil price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.price_per_unit).to.have.eql(pm.variables.get('oil_price_per_unit'))\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/energy",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"energy"
+									]
+								},
+								"description": "Use to obtain details on energy types."
+							},
+							"response": []
+						},
+						{
+							"name": "get order id - confirm oder is are correct",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200, OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/orders/{{Order_id}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"orders",
+										"{{Order_id}}"
+									]
+								},
+								"description": "Use to obtain details of a single previous order."
+							},
+							"response": []
+						},
+						{
+							"name": "delete order - confirm user can delete order",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Confirm response code and sting is 200 Success\r",
+											"pm.test(\"Status code is 200, Success\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"Success\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/orders/{{Order_id}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"orders",
+										"{{Order_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get order id - confirm order no longer exits",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Test to check no order is returned\r",
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200, OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/orders/:orderId?orderId={{Order_id}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"orders",
+										":orderId"
+									],
+									"query": [
+										{
+											"key": "orderId",
+											"value": "{{Order_id}}"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId",
+											"value": null
+										}
+									]
+								},
+								"description": "Use to obtain details of a single previous order."
+							},
+							"response": []
+						},
+						{
+							"name": "put buy 10 units of gas fuel",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Test response code and string is correct\r",
+											"pm.test(\"Status code is 200 OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\")\r",
+											"});\r",
+											"\r",
+											"\r",
+											"var jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test('Validate response contains message', function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"message\")\r",
+											"});\r",
+											"\r",
+											"pm.test('Validate message property contains a string', function () {\r",
+											"   pm.expect(jsonData.message).to.be.a('string')\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/buy/:id/:quantity",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"buy",
+										":id",
+										":quantity"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{gas_id}}"
+										},
+										{
+											"key": "quantity",
+											"value": "10"
+										}
+									]
+								},
+								"description": "Use to purchase energy units."
+							},
+							"response": []
+						},
+						{
+							"name": "get energy - Check gas quantity of units is reduced by 10 units",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200, OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"// Confirm correct properties are returned \r",
+											"pm.test(\"Expected electricty properties are returned\", function () {\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected gas properties are returned\", function () {\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected nuclear properties are returned\", function () {\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected oil properties are returned\", function () {\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"// Test quantity_of_units returned are correct\r",
+											"pm.test(\"Electricty quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.electric.quantity_of_units).to.have.eql(pm.environment.get('elec_quantity_of_units')-1)\r",
+											"})\r",
+											"pm.test(\"Gas quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.gas.quantity_of_units).to.have.eql(pm.environment.get('gas_quantity_of_units')-10)\r",
+											"})\r",
+											"pm.test(\"nuclear quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.nuclear.quantity_of_units).to.have.eql(pm.environment.get('nuclear_quantity_of_units'))\r",
+											"})\r",
+											"pm.test(\"oil quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.oil.quantity_of_units).to.have.eql(pm.environment.get('oil_quantity_of_units'))\r",
+											"})\r",
+											"\r",
+											"// Test unit_types returned are correct\r",
+											"pm.test(\"Electricty unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.unit_type).to.have.eql(pm.environment.get('elec_unit_type'))\r",
+											"})\r",
+											"pm.test(\"Gas unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.unit_type).to.have.eql(pm.environment.get('gas_unit_type'))\r",
+											"})\r",
+											"pm.test(\"nuclear unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.unit_type).to.have.eql(pm.environment.get('nuclear_unit_type'))\r",
+											"})\r",
+											"pm.test(\"oil unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.unit_type).to.have.eql(pm.environment.get('oil_unit_type'))\r",
+											"})\r",
+											"\r",
+											"// Test energy_id returned are correct\r",
+											"pm.test(\"Electricty energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.energy_id).to.have.eql(pm.variables.get('elec_id'))\r",
+											"})\r",
+											"pm.test(\"Gas energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.energy_id).to.have.eql(pm.variables.get('gas_id'))\r",
+											"})\r",
+											"pm.test(\"nuclear energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.energy_id).to.have.eql(pm.variables.get('nuclear_id'))\r",
+											"})\r",
+											"pm.test(\"oil energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.energy_id).to.have.eql(pm.variables.get('oil_id'))\r",
+											"})\r",
+											"\r",
+											"// Test price_per_unit returned are correct\r",
+											"pm.test(\"Electricty price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.price_per_unit).to.have.eql(pm.variables.get('elec_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"Gas price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.price_per_unit).to.have.eql(pm.variables.get('gas_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"nuclear price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.price_per_unit).to.have.eql(pm.variables.get('nuclear_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"oil price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.price_per_unit).to.have.eql(pm.variables.get('oil_price_per_unit'))\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/energy",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"energy"
+									]
+								},
+								"description": "Use to obtain details on energy types."
+							},
+							"response": []
+						},
+						{
+							"name": "put buy 1 unit of oil fuel",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Test response code and string is correct\r",
+											"pm.test(\"Status code is 200 OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\")\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Status code has string OK\", function () {\r",
+											"    pm.response.to.have.status(\"OK\")\r",
+											"})\r",
+											"\r",
+											"var jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test('Validate response contains message', function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"message\")\r",
+											"});\r",
+											"\r",
+											"pm.test('Validate message property contains a string', function () {\r",
+											"   pm.expect(jsonData.message).to.be.a('string')\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/buy/:id/:quantity",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"buy",
+										":id",
+										":quantity"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{oil_id}}"
+										},
+										{
+											"key": "quantity",
+											"value": "1"
+										}
+									]
+								},
+								"description": "Use to purchase energy units."
+							},
+							"response": []
+						},
+						{
+							"name": "get energy - Check oil quantity of units is reduced by 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200, OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"// Confirm correct properties are returned \r",
+											"pm.test(\"Expected electricty properties are returned\", function () {\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected gas properties are returned\", function () {\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected nuclear properties are returned\", function () {\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected oil properties are returned\", function () {\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"// Test quantity_of_units returned are correct\r",
+											"pm.test(\"Electricty quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.electric.quantity_of_units).to.have.eql(pm.environment.get('elec_quantity_of_units')-1)\r",
+											"})\r",
+											"pm.test(\"Gas quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.gas.quantity_of_units).to.have.eql(pm.environment.get('gas_quantity_of_units')-10)\r",
+											"})\r",
+											"pm.test(\"nuclear quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.nuclear.quantity_of_units).to.have.eql(pm.environment.get('nuclear_quantity_of_units'))\r",
+											"})\r",
+											"pm.test(\"oil quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.oil.quantity_of_units).to.have.eql(pm.environment.get('oil_quantity_of_units')-1)\r",
+											"})\r",
+											"\r",
+											"// Test unit_types returned are correct\r",
+											"pm.test(\"Electricty unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.unit_type).to.have.eql(pm.environment.get('elec_unit_type'))\r",
+											"})\r",
+											"pm.test(\"Gas unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.unit_type).to.have.eql(pm.environment.get('gas_unit_type'))\r",
+											"})\r",
+											"pm.test(\"nuclear unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.unit_type).to.have.eql(pm.environment.get('nuclear_unit_type'))\r",
+											"})\r",
+											"pm.test(\"oil unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.unit_type).to.have.eql(pm.environment.get('oil_unit_type'))\r",
+											"})\r",
+											"\r",
+											"// Test energy_id returned are correct\r",
+											"pm.test(\"Electricty energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.energy_id).to.have.eql(pm.variables.get('elec_id'))\r",
+											"})\r",
+											"pm.test(\"Gas energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.energy_id).to.have.eql(pm.variables.get('gas_id'))\r",
+											"})\r",
+											"pm.test(\"nuclear energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.energy_id).to.have.eql(pm.variables.get('nuclear_id'))\r",
+											"})\r",
+											"pm.test(\"oil energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.energy_id).to.have.eql(pm.variables.get('oil_id'))\r",
+											"})\r",
+											"\r",
+											"// Test price_per_unit returned are correct\r",
+											"pm.test(\"Electricty price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.price_per_unit).to.have.eql(pm.variables.get('elec_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"Gas price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.price_per_unit).to.have.eql(pm.variables.get('gas_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"nuclear price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.price_per_unit).to.have.eql(pm.variables.get('nuclear_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"oil price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.price_per_unit).to.have.eql(pm.variables.get('oil_price_per_unit'))\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/energy",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"energy"
+									]
+								},
+								"description": "Use to obtain details on energy types."
+							},
+							"response": []
+						},
+						{
+							"name": "put buy 3 units of nuclear fuel",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Test response code and string is correct\r",
+											"pm.test(\"Status code is 200 OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\")\r",
+											"});\r",
+											"\r",
+											"var jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test('Validate response contains message', function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"message\")\r",
+											"});\r",
+											"\r",
+											"pm.test('Validate message property contains a string', function () {\r",
+											"   pm.expect(jsonData.message).to.be.a('string')\r",
+											"});\r",
+											"\r",
+											"pm.test('Validate message property contains a no fuel message', function () {\r",
+											"   pm.expect(jsonData.message).to.be.eql(\"There is no nuclear fuel to purchase!\")\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/buy/:id/:quantity",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"buy",
+										":id",
+										":quantity"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{nuclear_id}}"
+										},
+										{
+											"key": "quantity",
+											"value": "3"
+										}
+									]
+								},
+								"description": "Use to purchase energy units."
+							},
+							"response": []
+						},
+						{
+							"name": "get energy - Check Nuclear unit value continues to be 0",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200, OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"// Confirm correct properties are returned \r",
+											"pm.test(\"Expected electricty properties are returned\", function () {\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected gas properties are returned\", function () {\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected nuclear properties are returned\", function () {\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected oil properties are returned\", function () {\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"// Test quantity_of_units returned are correct\r",
+											"pm.test(\"Electricty quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.electric.quantity_of_units).to.have.eql(pm.environment.get('elec_quantity_of_units')-1)\r",
+											"})\r",
+											"pm.test(\"Gas quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.gas.quantity_of_units).to.have.eql(pm.environment.get('gas_quantity_of_units')-10)\r",
+											"})\r",
+											"pm.test(\"nuclear quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.nuclear.quantity_of_units).to.have.eql(pm.environment.get('nuclear_quantity_of_units'))\r",
+											"})\r",
+											"pm.test(\"oil quantity_of_units returns the correct quantity_of_units\", function () {\r",
+											"    pm.expect(jsonData.oil.quantity_of_units).to.have.eql(pm.environment.get('oil_quantity_of_units')-1)\r",
+											"})\r",
+											"\r",
+											"// Test unit_types returned are correct\r",
+											"pm.test(\"Electricty unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.unit_type).to.have.eql(pm.environment.get('elec_unit_type'))\r",
+											"})\r",
+											"pm.test(\"Gas unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.unit_type).to.have.eql(pm.environment.get('gas_unit_type'))\r",
+											"})\r",
+											"pm.test(\"nuclear unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.unit_type).to.have.eql(pm.environment.get('nuclear_unit_type'))\r",
+											"})\r",
+											"pm.test(\"oil unit_type returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.unit_type).to.have.eql(pm.environment.get('oil_unit_type'))\r",
+											"})\r",
+											"\r",
+											"// Test energy_id returned are correct\r",
+											"pm.test(\"Electricty energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.energy_id).to.have.eql(pm.variables.get('elec_id'))\r",
+											"})\r",
+											"pm.test(\"Gas energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.energy_id).to.have.eql(pm.variables.get('gas_id'))\r",
+											"})\r",
+											"pm.test(\"nuclear energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.energy_id).to.have.eql(pm.variables.get('nuclear_id'))\r",
+											"})\r",
+											"pm.test(\"oil energy_id returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.energy_id).to.have.eql(pm.variables.get('oil_id'))\r",
+											"})\r",
+											"\r",
+											"// Test price_per_unit returned are correct\r",
+											"pm.test(\"Electricty price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.electric.price_per_unit).to.have.eql(pm.variables.get('elec_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"Gas price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.gas.price_per_unit).to.have.eql(pm.variables.get('gas_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"nuclear price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.nuclear.price_per_unit).to.have.eql(pm.variables.get('nuclear_price_per_unit'))\r",
+											"})\r",
+											"pm.test(\"oil price_per_unit returns the correct unit type\", function () {\r",
+											"    pm.expect(jsonData.oil.price_per_unit).to.have.eql(pm.variables.get('oil_price_per_unit'))\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/energy",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"energy"
+									]
+								},
+								"description": "Use to obtain details on energy types."
+							},
+							"response": []
+						},
+						{
+							"name": "post reset test data",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"//Test to condfirm expected status code is returned\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"//Test to confirm expected properties are returned\r",
+											"pm.test(\"properties are correct\", function () {\r",
+											"pm.expect(jsonData).to.have.property(\"message\")\r",
+											"pm.expect(jsonData.message).to.have.eql(\"Success\")\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/reset",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"reset"
+									]
+								},
+								"description": "Use to reset the test data back to its initial state"
+							},
+							"response": []
+						},
+						{
+							"name": "get energy - Return current energy values",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200, OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"// Confirm correct properties are returned \r",
+											"pm.test(\"Expected electricty properties are returned\", function () {\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected gas properties are returned\", function () {\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected nuclear properties are returned\", function () {\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected oil properties are returned\", function () {\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"//Test vaules are rest\r",
+											"//Elec\r",
+											"pm.test(\"Elec vaules are rest\", function () {\r",
+											"    pm.expect(jsonData.electric.energy_id).to.have.eql(pm.environment.get(\"elec_id\"))\r",
+											"    pm.expect(jsonData.electric.price_per_unit).to.have.eql(pm.environment.get(\"elec_price_per_unit\"))\r",
+											"    pm.expect(jsonData.electric.quantity_of_units).to.have.eql(pm.environment.get(\"elec_quantity_of_units\"))\r",
+											"    pm.expect(jsonData.electric.unit_type).to.have.eql(pm.environment.get(\"elec_unit_type\"))\r",
+											"});\r",
+											"\r",
+											"//Gas\r",
+											"pm.test(\"Gas vaules are rest\", function () {\r",
+											"    pm.expect(jsonData.gas.energy_id).to.have.eql(pm.environment.get(\"gas_id\"))\r",
+											"    pm.expect(jsonData.gas.price_per_unit).to.have.eql(pm.environment.get(\"gas_price_per_unit\"))\r",
+											"    pm.expect(jsonData.gas.quantity_of_units).to.have.eql(pm.environment.get(\"gas_quantity_of_units\"))\r",
+											"    pm.expect(jsonData.gas.unit_type).to.have.eql(pm.environment.get(\"gas_unit_type\"))\r",
+											"});\r",
+											"\r",
+											"//Nuclear\r",
+											"pm.test(\"Nuclear vaules are rest\", function () {\r",
+											"    pm.expect(jsonData.nuclear.energy_id).to.have.eql(pm.environment.get(\"nuclear_id\"))\r",
+											"    pm.expect(jsonData.nuclear.price_per_unit).to.have.eql(pm.environment.get(\"nuclear_price_per_unit\"))\r",
+											"    pm.expect(jsonData.nuclear.quantity_of_units).to.have.eql(pm.environment.get(\"nuclear_quantity_of_units\"))\r",
+											"    pm.expect(jsonData.nuclear.unit_type).to.have.eql(pm.environment.get(\"nuclear_unit_type\"))\r",
+											"});\r",
+											"\r",
+											"//oil\r",
+											"pm.test(\"oil vaules are rest\", function () {\r",
+											"    pm.expect(jsonData.oil.energy_id).to.have.eql(pm.environment.get(\"oil_id\"))\r",
+											"    pm.expect(jsonData.oil.price_per_unit).to.have.eql(pm.environment.get(\"oil_price_per_unit\"))\r",
+											"    pm.expect(jsonData.oil.quantity_of_units).to.have.eql(pm.environment.get(\"oil_quantity_of_units\"))\r",
+											"    pm.expect(jsonData.oil.unit_type).to.have.eql(pm.environment.get(\"oil_unit_type\"))\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/energy",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"energy"
+									]
+								},
+								"description": "Use to obtain details on energy types."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Orders before current data",
+					"item": [
+						{
+							"name": "post login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"//Test to confirm expected status code is returned\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"//Test to confirm expected properties are returned\r",
+											"pm.test(\"properties are correct\", function () {\r",
+											"pm.expect(jsonData).to.have.property(\"access_token\")\r",
+											"pm.expect(jsonData).to.have.property(\"message\")\r",
+											"});\r",
+											"\r",
+											"//Set access token in variable\r",
+											"pm.environment.set(\"access_token\", jsonData.access_token)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"test\",\n  \"password\": \"testing\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"login"
+									]
+								},
+								"description": "Use to obtain an Bearer access token."
+							},
+							"response": []
+						},
+						{
+							"name": "post reset test data",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"//Test to condfirm expected status code and string is returned\r",
+											"pm.test(\"Status code is 200 OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"//Test to confirm expected properties are returned\r",
+											"pm.test(\"properties are correct\", function () {\r",
+											"pm.expect(jsonData).to.have.property(\"message\")\r",
+											"pm.expect(jsonData.message).to.have.eql(\"Success\")\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/reset",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"reset"
+									]
+								},
+								"description": "Use to reset the test data back to its initial state"
+							},
+							"response": []
+						},
+						{
+							"name": "get energy - Return current energy values",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"//Set value variables\r",
+											"//Elec\r",
+											"pm.environment.set(\"elec_id\", jsonData.electric.energy_id);\r",
+											"pm.environment.set(\"elec_price_per_unit\", jsonData.electric.price_per_unit);\r",
+											"pm.environment.set(\"elec_quantity_of_units\", jsonData.electric.quantity_of_units);\r",
+											"pm.environment.set(\"elec_unit_type\", jsonData.electric.unit_type);\r",
+											"\r",
+											"//Gas\r",
+											"pm.environment.set(\"gas_id\", jsonData.gas.energy_id);\r",
+											"pm.environment.set(\"gas_price_per_unit\", jsonData.gas.price_per_unit);\r",
+											"pm.environment.set(\"gas_quantity_of_units\", jsonData.gas.quantity_of_units);\r",
+											"pm.environment.set(\"gas_unit_type\", jsonData.gas.unit_type);\r",
+											"\r",
+											"//nuclear\r",
+											"pm.environment.set(\"nuclear_id\", jsonData.nuclear.energy_id);\r",
+											"pm.environment.set(\"nuclear_price_per_unit\", jsonData.nuclear.price_per_unit);\r",
+											"pm.environment.set(\"nuclear_quantity_of_units\", jsonData.nuclear.quantity_of_units);\r",
+											"pm.environment.set(\"nuclear_unit_type\", jsonData.nuclear.unit_type);\r",
+											"\r",
+											"//oil\r",
+											"pm.environment.set(\"oil_id\", jsonData.oil.energy_id);\r",
+											"pm.environment.set(\"oil_price_per_unit\", jsonData.oil.price_per_unit);\r",
+											"pm.environment.set(\"oil_quantity_of_units\", jsonData.oil.quantity_of_units);\r",
+											"pm.environment.set(\"oil_unit_type\", jsonData.oil.unit_type);\r",
+											"\r",
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200, OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"// Confirm correct properties are returned \r",
+											"pm.test(\"Expected electricty properties are returned\", function () {\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected gas properties are returned\", function () {\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected nuclear properties are returned\", function () {\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected oil properties are returned\", function () {\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/energy",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"energy"
+									]
+								},
+								"description": "Use to obtain details on energy types."
+							},
+							"response": []
+						},
+						{
+							"name": "put buy 1 unit of elec fuel",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\")\r",
+											"});\r",
+											"\r",
+											"var jsonData = pm.response.json();\r",
+											"\r",
+											"//Test response contains a message and that the values within the message are correct\r",
+											"pm.test('Validate response contains message', function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"message\")\r",
+											"});\r",
+											"\r",
+											"pm.test('Validate message property contains a string', function () {\r",
+											"   pm.expect(jsonData.message).to.be.a('string')\r",
+											"});\r",
+											"\r",
+											"pm.environment.set(\"message\", jsonData.message)\r",
+											"const message = pm.environment.get(\"message\");\r",
+											"const split = message.split(' ')\r",
+											"console.log(split)\r",
+											"\r",
+											"pm.environment.set(\"Order_id\", split[18].slice(0,-1))\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/buy/:id/:quantity",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"buy",
+										":id",
+										":quantity"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{elec_id}}"
+										},
+										{
+											"key": "quantity",
+											"value": "1"
+										}
+									]
+								},
+								"description": "Use to purchase energy units."
+							},
+							"response": []
+						},
+						{
+							"name": "get orders - Confrim order Id Exisits for today",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Test todays order id is displayed\r",
+											"pm.test(\"test order id exits\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include((pm.environment.get(\"Order_id\")))\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/orders?",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"orders"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get orders - Confrim order Id Exisits for today",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment')\r",
+											"pm.environment.set(\"timestamp_current\", moment().format('ddd, Do MMM YYYY HH:mm:ss') + \" GMT\")\r",
+											"\r",
+											"pm.environment.set(\"timestamp-1\", moment().subtract(1, 'day').format('ddd, Do MMM YYYY HH:mm:ss') + \" GMT\")\r",
+											"\r",
+											"pm.environment.set(\"date_current\", moment().format('ddd, Do MMM YYYY'))"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"let response = pm.response.json();\r",
+											"let current_length = response.length\r",
+											"console.log(current_length)\r",
+											"//Filter data to only show items not ordered today\r",
+											"let date = response.filter(response => response.time >= pm.environment.get(\"timestamp-1\"))\r",
+											"\r",
+											"let length = date.length\r",
+											"\r",
+											"//Log filtered lenght and data in console\r",
+											"console.log(length)\r",
+											"console.log(date)\r",
+											"\r",
+											"\r",
+											"pm.test(\"test test filtered response does not include order id from today\", function () {\r",
+											"    pm.expect(date).to.not.include((pm.environment.get(\"Order_id\")))\r",
+											"});\r",
+											"\r",
+											"pm.test(\"test filtered response does not include todays date\", function () {\r",
+											"    pm.expect(date).to.not.include((pm.environment.get(\"date_current\")))\r",
+											"});\r",
+											"\r",
+											"pm.test(\"test filtered response length does not match unflitered response length\", function () {\r",
+											"    pm.expect(length).to.not.eql(current_length)\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "timestamp",
+											"value": "{{timestamp-1}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/orders?",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"orders"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "post reset test data",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"//Test to condfirm expected status code is returned\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"//Test to confirm expected properties are returned\r",
+											"pm.test(\"properties are correct\", function () {\r",
+											"pm.expect(jsonData).to.have.property(\"message\")\r",
+											"pm.expect(jsonData.message).to.have.eql(\"Success\")\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/reset",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"reset"
+									]
+								},
+								"description": "Use to reset the test data back to its initial state"
+							},
+							"response": []
+						},
+						{
+							"name": "get energy - Check current energy values are rest",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Confirm response code and sting is 200 OK\r",
+											"pm.test(\"Status code is 200, OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"// Confirm correct properties are returned \r",
+											"pm.test(\"Expected electricty properties are returned\", function () {\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.electric).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected gas properties are returned\", function () {\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.gas).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected nuclear properties are returned\", function () {\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.nuclear).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Expected oil properties are returned\", function () {\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"energy_id\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"price_per_unit\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"quantity_of_units\")\r",
+											"    pm.expect(jsonData.oil).to.have.property(\"unit_type\")\r",
+											"})\r",
+											"\r",
+											"//Test vaules are rest\r",
+											"//Elec\r",
+											"pm.test(\"Elec vaules are rest\", function () {\r",
+											"    pm.expect(jsonData.electric.energy_id).to.have.eql(pm.environment.get(\"elec_id\"))\r",
+											"    pm.expect(jsonData.electric.price_per_unit).to.have.eql(pm.environment.get(\"elec_price_per_unit\"))\r",
+											"    pm.expect(jsonData.electric.quantity_of_units).to.have.eql(pm.environment.get(\"elec_quantity_of_units\"))\r",
+											"    pm.expect(jsonData.electric.unit_type).to.have.eql(pm.environment.get(\"elec_unit_type\"))\r",
+											"});\r",
+											"\r",
+											"//Gas\r",
+											"pm.test(\"Gas vaules are rest\", function () {\r",
+											"    pm.expect(jsonData.gas.energy_id).to.have.eql(pm.environment.get(\"gas_id\"))\r",
+											"    pm.expect(jsonData.gas.price_per_unit).to.have.eql(pm.environment.get(\"gas_price_per_unit\"))\r",
+											"    pm.expect(jsonData.gas.quantity_of_units).to.have.eql(pm.environment.get(\"gas_quantity_of_units\"))\r",
+											"    pm.expect(jsonData.gas.unit_type).to.have.eql(pm.environment.get(\"gas_unit_type\"))\r",
+											"});\r",
+											"\r",
+											"//Nuclear\r",
+											"pm.test(\"Nuclear vaules are rest\", function () {\r",
+											"    pm.expect(jsonData.nuclear.energy_id).to.have.eql(pm.environment.get(\"nuclear_id\"))\r",
+											"    pm.expect(jsonData.nuclear.price_per_unit).to.have.eql(pm.environment.get(\"nuclear_price_per_unit\"))\r",
+											"    pm.expect(jsonData.nuclear.quantity_of_units).to.have.eql(pm.environment.get(\"nuclear_quantity_of_units\"))\r",
+											"    pm.expect(jsonData.nuclear.unit_type).to.have.eql(pm.environment.get(\"nuclear_unit_type\"))\r",
+											"});\r",
+											"\r",
+											"//oil\r",
+											"pm.test(\"oil vaules are rest\", function () {\r",
+											"    pm.expect(jsonData.oil.energy_id).to.have.eql(pm.environment.get(\"oil_id\"))\r",
+											"    pm.expect(jsonData.oil.price_per_unit).to.have.eql(pm.environment.get(\"oil_price_per_unit\"))\r",
+											"    pm.expect(jsonData.oil.quantity_of_units).to.have.eql(pm.environment.get(\"oil_quantity_of_units\"))\r",
+											"    pm.expect(jsonData.oil.unit_type).to.have.eql(pm.environment.get(\"oil_unit_type\"))\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/energy",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"energy"
+									]
+								},
+								"description": "Use to obtain details on energy types."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Negative tests",
+					"item": [
+						{
+							"name": "post reset test data - 401 response",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"//Test to condfirm expected status code and string is returned\r",
+											"pm.test(\"Status code is 401 OK\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"    pm.response.to.have.status(\"UNAUTHORIZED\");\r",
+											"});\r",
+											"\r",
+											"//Test to confirm expected property and message is returned\r",
+											"pm.test(\"properties are correct\", function () {\r",
+											"pm.expect(jsonData).to.have.property(\"message\")\r",
+											"pm.expect(jsonData.message).to.have.eql(\"Unauthorized\")\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/reset",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"reset"
+									]
+								},
+								"description": "Use to reset the test data back to its initial state"
+							},
+							"response": []
+						},
+						{
+							"name": "post login - 400 Bad Request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"//Test to confirm expected status code is returned\r",
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"    pm.response.to.have.status(\"BAD REQUEST\");\r",
+											"});\r",
+											"\r",
+											"//Test to confirm expected property and message is returned\r",
+											"pm.test(\"properties are correct\", function () {\r",
+											"pm.expect(jsonData).to.have.property(\"message\")\r",
+											"pm.expect(jsonData.message).to.have.eql(\"Bad Request\")\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"login"
+									]
+								},
+								"description": "Use to obtain an Bearer access token."
+							},
+							"response": []
+						},
+						{
+							"name": "post login - 401 Unauthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"//Test to condfirm expected status code and string is returned\r",
+											"pm.test(\"Status code is 401 OK\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"    pm.response.to.have.status(\"UNAUTHORIZED\");\r",
+											"});\r",
+											"\r",
+											"//Test to confirm expected property and message is returned\r",
+											"pm.test(\"properties are correct\", function () {\r",
+											"pm.expect(jsonData).to.have.property(\"message\")\r",
+											"pm.expect(jsonData.message).to.have.eql(\"Unauthorized\")\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"invalid\",\r\n  \"password\": \"testing\"\r\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"login"
+									]
+								},
+								"description": "Use to obtain an Bearer access token."
+							},
+							"response": []
+						},
+						{
+							"name": "put buy - 400 -Bad Request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"//Test to confirm expected status code is returned\r",
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"    pm.response.to.have.status(\"BAD REQUEST\");\r",
+											"});\r",
+											"\r",
+											"//Test to confirm expected property and message is returned\r",
+											"pm.test(\"properties are correct\", function () {\r",
+											"pm.expect(jsonData).to.have.property(\"message\")\r",
+											"pm.expect(jsonData.message).to.have.eql(\"Bad request\")\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ENSEK/buy/:id/:quantity",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ENSEK",
+										"buy",
+										":id",
+										":quantity"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "8"
+										},
+										{
+											"key": "quantity",
+											"value": "1"
+										}
+									]
+								},
+								"description": "Use to purchase energy units."
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "Authorization",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "{{apiKey}}",
+				"type": "string"
+			},
+			{
+				"key": "in",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
